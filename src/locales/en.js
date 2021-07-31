@@ -4,6 +4,7 @@ export default {
       notRSS: 'This URL doesn\'t include RSS',
       invalidUrl: 'This link isn\'t URL',
       duplicateUrl: 'This RSS is already in list',
+      complete: 'RSS properly loaded',
     },
     buttons: {
       modal: {

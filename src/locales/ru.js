@@ -1,9 +1,11 @@
 export default {
   translation: {
     feedback: {
-      notRSS: 'Этот URL не содержит RSS',
-      invalidUrl: 'Ссылка не является URL',
-      duplicateUrl: 'Данный RSS уже содержится в списке',
+      notRSS: 'Ресурс не содержит валидный RSS',
+      invalidUrl: 'Ссылка должна быть валидным URL',
+      duplicateUrl: 'RSS уже существует',
+      complete: 'RSS успешно загружен',
+      networkError: 'Ошибка сети',
     },
     buttons: {
       modal: {

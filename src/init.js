@@ -59,6 +59,20 @@ export default () => {
           break;
         case 'invalid':
           input.classList.add('is-invalid');
+          feedback.classList.add('text-danger');
+          feedback.classList.remove('text-success');
+          feedback.textContent = i18next.t(value.feedbackKey);
+          break;
+        case 'complete':
+          input.classList.remove('is-invalid');
+          feedback.classList.remove('text-danger');
+          feedback.classList.add('text-success');
+          feedback.textContent = i18next.t(value.feedbackKey);
+          break;
+        case 'networkError':
+          input.classList.add('is-invalid');
+          feedback.classList.add('text-danger');
+          feedback.classList.remove('text-success');
           feedback.textContent = i18next.t(value.feedbackKey);
           break;
         default:
@@ -102,31 +116,40 @@ export default () => {
           return;
         }
 
-        const parsedChannel = parse(response.data);
-        const { items, title, description } = parsedChannel;
-        const feed = {
-          id, url, title, description,
+        const makeRequest = () => {
+          const parsedChannel = parse(response.data);
+          const { items, title, description } = parsedChannel;
+          const feed = {
+            id, url, title, description,
+          };
+          const posts = items
+            .map((item) => ({ ...item, feedId: id }));
+          console.log(posts);
+          const newPosts = _.differenceBy(posts, state.posts, 'link');
+          console.log(newPosts);
+
+          watchedState.feeds = _.sortBy(_.uniqBy([
+            feed,
+            ...state.feeds,
+          ], 'url'), 'id');
+          watchedState.posts = _.uniqBy([
+            ...newPosts,
+            ...state.posts,
+          ], 'link');
+
+          setTimeout(makeRequest, 5000);
+
+          console.log('tick');
         };
-        const posts = items
-          .map((item) => ({ ...item, feedId: id }));
-        const newPosts = _.differenceBy(posts, state.posts, 'link');
-        console.log(newPosts);
 
-        watchedState.feeds = _.sortBy(_.uniqBy([
-          feed,
-          ...state.feeds,
-        ], 'url'), 'id');
-        watchedState.posts = _.uniqBy([
-          ...newPosts,
-          ...state.posts,
-        ], 'link');
-
-        setTimeout(() => request(id, url), 5000);
+        makeRequest();
+        watchedState.uiState = { status: 'complete', feedbackKey: 'feedback.complete' };
       })
-      .catch(console.error);
+      .catch(() => {
+        watchedState.uiState = { status: 'networkError', feedbackKey: 'feedback.networkError' };
+      });
   };
 
   const formSubmitData = { watchedState, request };
   form.addEventListener('submit', handlers.formSubmit(formSubmitData));
-
 };
