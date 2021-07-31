@@ -1,85 +1,132 @@
+import i18next from 'i18next';
 import * as yup from 'yup';
 import onChange from 'on-change';
 import _ from 'lodash';
-import url from 'url';
 import axios from 'axios';
+import handlers from './handlers';
 import parse from './parse';
+import render from './render';
+import locales from './locales';
+
+const isRSS = ({ data }) => (
+  data.status.content_type.includes('application/rss+xml')
+);
+
+const getAllOriginsUrl = (url) => (
+  `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${url}`
+);
 
 export default () => {
-  const container = document.querySelector('#point');
-  container.innerHTML = `
-    <form class="md-3">
-      <div class='container-sm'>
-        <div class="row">
-          <div class="col-8">
-            <input type='href' class='form-control' id='rssHref'>
-          </div>
-          <div class="col-4">
-            <button type='submit' class='btn btn-primary'>Add RSS</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  `;
+  i18next.init({
+    lng: 'ru',
+    debug: true,
+    resources: {
+      ru: locales.ru,
+      en: locales.en,
+    },
+  });
+
+  yup.setLocale({
+    string: {
+      url: ({ url }) => ({ key: 'feedback.invalidUrl', values: { url } }),
+    },
+  });
 
   const state = {
     feeds: [],
     posts: [],
-  };
-
-  const getAllOriginsUrl = (url) => (
-    `https://hexlet-allorigins.herokuapp.com/get?url=${url}`
-  );
-
-  const validateSchema = yup.string().required().url().test({
-    name: 'isDuplicate',
-    test: (value) => {
-      const urls = state.feeds.map(({ url }) => url);
-      return !urls.includes(value);
+    uiState: {
+      status: 'pending',
+      feedbackKey: '',
     },
-  });
-
-  const watchedState = onChange(state, (path, value) => {
-    console.log(state);
-  });
+  };
 
   const form = document.querySelector('form');
   const input = document.querySelector('.form-control');
+  const button = document.querySelector('form button');
+  const feedback = document.querySelector('.feedback');
+  const feedsContainer = document.querySelector('#feeds');
+  const postsContainer = document.querySelector('#posts');
 
-  console.log(form);
-  const submitHandler = (e) => {
-    e.preventDefault();
-    
-    const { value: url } = input;
-    validateSchema
-      .isValid(url)
-      .then((valid) => {
-        if (!valid) {
-          input.classList.add('is-invalid');
-        } else {
+  button.textContent = i18next.t('buttons.form.add');
+
+  const watchedState = onChange(state, (path, value) => {
+    if (path === 'uiState') {
+      switch (value.status) {
+        case 'pending':
           input.classList.remove('is-invalid');
-          const id = _.uniqueId();
-          const feed = { id, url };
-          form.reset();
+          feedback.textContent = '';
+          break;
+        case 'invalid':
+          input.classList.add('is-invalid');
+          feedback.textContent = i18next.t(value.feedbackKey);
+          break;
+        default:
+          throw new Error('got into default in switch');
+      }
+    }
 
-          axios
-            .get(getAllOriginsUrl(value))
-            .then((response) => {
-              const parsedChannel = parse(response.data);
-              console.log(parsedChannel);
-              const { title, description } = parsedChannel;
-              const newFeed = { ...feed, title, description };
-              state.feeds = [...state.feeds, newFeed];
-              watchedState.posts = [
-                ...state.posts,
-                parsedChannel.items.map((item) => ({ ...item, feedId: id }))
-              ];
-            })
-            .catch((e) => console.log(e));
-        }
-      });
+    if (path === 'posts') {
+      postsContainer.innerHTML = render.posts(value);
+      const buttons = document.querySelectorAll('li button');
+      buttons.forEach((b) => (
+        b.addEventListener(
+          'click',
+          handlers.postButton(watchedState),
+        )
+      ));
+      return;
+    }
+
+    if (path === 'feeds') {
+      feedsContainer.innerHTML = render.feeds(value);
+      return;
+    }
+
+    if (path.includes('posts')) {
+      console.log(value);
+    }
 
     console.log(state);
+  });
+
+  const request = (id, url) => {
+    axios
+      .get(getAllOriginsUrl(url))
+      .then((response) => {
+        if (!isRSS(response)) {
+          watchedState.uiState = {
+            status: 'invalid',
+            feedbackKey: 'feedback.notRSS',
+          };
+          return;
+        }
+
+        const parsedChannel = parse(response.data);
+        const { items, title, description } = parsedChannel;
+        const feed = {
+          id, url, title, description,
+        };
+        const posts = items
+          .map((item) => ({ ...item, feedId: id }));
+        const newPosts = _.differenceBy(posts, state.posts, 'link');
+        console.log(newPosts);
+
+        watchedState.feeds = _.sortBy(_.uniqBy([
+          feed,
+          ...state.feeds,
+        ], 'url'), 'id');
+        watchedState.posts = _.uniqBy([
+          ...newPosts,
+          ...state.posts,
+        ], 'link');
+
+        setTimeout(() => request(id, url), 5000);
+      })
+      .catch(console.error);
   };
-  form.addEventListener('submit', submitHandler);
+
+  const formSubmitData = { watchedState, request };
+  form.addEventListener('submit', handlers.formSubmit(formSubmitData));
+
 };
