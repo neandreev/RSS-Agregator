@@ -139,7 +139,8 @@ export default () => {
 
         if (makeStatus) watchedState.uiState = { status: 'complete', feedbackKey: 'feedback.complete' };
       })
-      .catch(() => {
+      .catch((e) => {
+        console.dir(e);
         watchedState.uiState = { status: 'networkError', feedbackKey: 'feedback.networkError' };
       });
 
