@@ -46,7 +46,7 @@ export default () => {
 
   const form = document.querySelector('form');
   const input = document.querySelector('.form-control');
-  const button = document.querySelector('form button');
+  const button = document.querySelector('[type=submit');
   const feedback = document.querySelector('.feedback');
   const feedsContainer = document.querySelector('#feeds');
   const postsContainer = document.querySelector('#posts');
@@ -54,7 +54,6 @@ export default () => {
   button.textContent = i18next.t('buttons.form.add');
 
   const watchedState = onChange(state, (path, value) => {
-    console.log(state);
     if (path === 'uiState') {
       switch (value.status) {
         case 'pending':
@@ -98,14 +97,7 @@ export default () => {
 
     if (path === 'feeds') {
       feedsContainer.innerHTML = render.feeds(value);
-      return;
     }
-
-    if (path.includes('posts')) {
-      console.log(value);
-    }
-
-    console.log(state);
   });
 
   const request = (id, url, makeStatus) => {
@@ -127,9 +119,7 @@ export default () => {
         };
         const posts = items
           .map((item) => ({ ...item, feedId: id }));
-        console.log(posts);
         const newPosts = _.differenceBy(posts, state.posts, 'link');
-        console.log(newPosts);
 
         watchedState.feeds = _.sortBy(_.uniqBy([
           feed,
