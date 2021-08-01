@@ -20,11 +20,11 @@ export default (data) => (e) => {
 
       request(id, url, true);
     })
-    .catch((e) => {
-      console.dir(e);
+    .catch((error) => {
+      console.dir(error);
       watchedState.uiState = {
         status: 'invalid',
-        feedbackKey: e.message.key,
+        feedbackKey: error.message.key,
       };
     });
 };
