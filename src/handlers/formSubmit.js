@@ -21,7 +21,6 @@ export default (data) => (e) => {
       request(id, url, true);
     })
     .catch((error) => {
-      console.dir(error);
       watchedState.uiState = {
         status: 'invalid',
         feedbackKey: error.message.key,

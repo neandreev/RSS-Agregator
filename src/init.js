@@ -48,13 +48,10 @@ export default () => {
   const feedback = document.querySelector('.feedback');
   const feedsContainer = document.querySelector('#feeds');
   const postsContainer = document.querySelector('#posts');
-  console.log(form);
-  console.log(document.body.innerHTML);
   button.textContent = i18next.t('buttons.form.add');
 
   const watchedState = onChange(state, (path, value) => {
     if (path === 'uiState') {
-      console.log('got');
       switch (value.status) {
         case 'pending':
           input.classList.remove('is-invalid');
@@ -153,7 +150,7 @@ export default () => {
             watchedState.uiState = { status: 'invalid', feedbackKey: 'feedback.notRSS' };
             break;
           default:
-            console.log('got into default in switch');
+            throw new Error(`Unknown error message: ${e}`);
         }
       });
   };
