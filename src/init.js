@@ -111,14 +111,13 @@ export default () => {
     axios
       .get(getAllOriginsUrl(url))
       .then((response) => {
-        console.log(response);
-        if (!isRSS(response)) {
-          watchedState.uiState = {
-            status: 'invalid',
-            feedbackKey: 'feedback.notRSS',
-          };
-          return;
-        }
+        // if (!isRSS(response)) {
+        //   watchedState.uiState = {
+        //     status: 'invalid',
+        //     feedbackKey: 'feedback.notRSS',
+        //   };
+        //   return;
+        // }
 
         const parsedChannel = parse(response.data);
         const { items, title, description } = parsedChannel;
@@ -139,13 +138,20 @@ export default () => {
         ], 'link');
 
         if (makeStatus) watchedState.uiState = { status: 'complete', feedbackKey: 'feedback.complete' };
+        setTimeout(() => request(id, url), 5000);
       })
       .catch((e) => {
-        console.dir(e);
-        watchedState.uiState = { status: 'networkError', feedbackKey: 'feedback.networkError' };
+        switch (e.message) {
+          case 'Network Error':
+            watchedState.uiState = { status: 'networkError', feedbackKey: 'feedback.networkError' };
+            break;
+          case 'notRSS':
+            watchedState.uiState = { status: 'invalid', feedbackKey: 'feedback.notRSS' };
+            break;
+          default:
+            console.log('got into default in switch');
+        }
       });
-
-    setTimeout(() => request(id, url), 5000);
   };
 
   const formSubmitData = { watchedState, request };
