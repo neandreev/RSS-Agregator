@@ -111,6 +111,7 @@ export default () => {
     axios
       .get(getAllOriginsUrl(url))
       .then((response) => {
+        console.log(response);
         if (!isRSS(response)) {
           watchedState.uiState = {
             status: 'invalid',
