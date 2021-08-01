@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 
 const renderFeed = ({ title, description }) => (
-  `<li>
+  `<li class="list-group-item border-0">
     <h3>${title}</h3>
     <p>${description}</p>
   </li>`
@@ -10,7 +10,7 @@ const renderFeed = ({ title, description }) => (
 export default (feeds) => {
   const result = `
     <div>
-      <h2>${i18next.t('feedsHeader')}</h2>
+      <h2 class="list-group">${i18next.t('feedsHeader')}</h2>
       <ul>
         ${feeds.map(renderFeed).join('')}
       </ul>
