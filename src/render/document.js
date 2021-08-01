@@ -25,7 +25,7 @@ export default () => {
           <div class='container-sm'>
             <div class="row">
               <div class="col-8">
-                <input name='url' type='href' class='form-control' id='rssHref'>
+                <input aria-label='url' name='url' type='href' class='form-control' id='rssHref'>
               </div>
               <div class="col-4">
                 <button type='submit' class='btn btn-primary'>Add RSS</button>
