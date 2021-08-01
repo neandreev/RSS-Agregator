@@ -8,10 +8,6 @@ import parse from './parse';
 import render from './render';
 import locales from './locales';
 
-const isRSS = ({ data }) => (
-  data.status.content_type.includes('application/rss+xml')
-);
-
 const getAllOriginsUrl = (url) => (
   `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${url}`
 );
@@ -44,9 +40,11 @@ export default () => {
     },
   };
 
+  document.body.innerHTML = render.doc();
+
   const form = document.querySelector('form');
   const input = document.querySelector('.form-control');
-  const button = document.querySelector('[type=submit');
+  const button = document.querySelector('[type=submit]');
   const feedback = document.querySelector('.feedback');
   const feedsContainer = document.querySelector('#feeds');
   const postsContainer = document.querySelector('#posts');
@@ -56,28 +54,40 @@ export default () => {
 
   const watchedState = onChange(state, (path, value) => {
     if (path === 'uiState') {
+      console.log('got');
       switch (value.status) {
         case 'pending':
           input.classList.remove('is-invalid');
+          input.setAttribute('readonly', true);
           feedback.textContent = '';
+          button.disabled = true;
           break;
         case 'invalid':
+          document.querySelector('form').reset();
           input.classList.add('is-invalid');
+          input.removeAttribute('readonly');
           feedback.classList.add('text-danger');
           feedback.classList.remove('text-success');
           feedback.textContent = i18next.t(value.feedbackKey);
+          button.disabled = false;
           break;
         case 'complete':
+          document.querySelector('form').reset();
+          button.disabled = false;
+          input.removeAttribute('readonly');
           input.classList.remove('is-invalid');
           feedback.classList.remove('text-danger');
           feedback.classList.add('text-success');
           feedback.textContent = i18next.t(value.feedbackKey);
           break;
         case 'networkError':
+          document.querySelector('form').reset();
           input.classList.add('is-invalid');
+          input.removeAttribute('readonly');
           feedback.classList.add('text-danger');
           feedback.classList.remove('text-success');
           feedback.textContent = i18next.t(value.feedbackKey);
+          button.disabled = false;
           break;
         default:
           throw new Error('got into default in switch');
@@ -105,13 +115,13 @@ export default () => {
     axios
       .get(getAllOriginsUrl(url))
       .then((response) => {
-        if (!isRSS(response)) {
-          watchedState.uiState = {
-            status: 'invalid',
-            feedbackKey: 'feedback.notRSS',
-          };
-          return;
-        }
+        // if (!isRSS(response)) {
+        //   watchedState.uiState = {
+        //     status: 'invalid',
+        //     feedbackKey: 'feedback.notRSS',
+        //   };
+        //   return;
+        // }
 
         const parsedChannel = parse(response.data);
         const { items, title, description } = parsedChannel;
@@ -119,7 +129,7 @@ export default () => {
           id, url, title, description,
         };
         const posts = items
-          .map((item) => ({ ...item, feedId: id }));
+          .map((item) => ({ ...item, feedId: id, id: _.uniqueId() }));
         const newPosts = _.differenceBy(posts, state.posts, 'link');
 
         watchedState.feeds = _.sortBy(_.uniqBy([
@@ -132,12 +142,20 @@ export default () => {
         ], 'link');
 
         if (makeStatus) watchedState.uiState = { status: 'complete', feedbackKey: 'feedback.complete' };
+        setTimeout(() => request(id, url), 5000);
       })
-      .catch(() => {
-        watchedState.uiState = { status: 'networkError', feedbackKey: 'feedback.networkError' };
+      .catch((e) => {
+        switch (e.message) {
+          case 'Network Error':
+            watchedState.uiState = { status: 'networkError', feedbackKey: 'feedback.networkError' };
+            break;
+          case 'notRSS':
+            watchedState.uiState = { status: 'invalid', feedbackKey: 'feedback.notRSS' };
+            break;
+          default:
+            console.log('got into default in switch');
+        }
       });
-
-    setTimeout(() => request(id, url), 5000);
   };
 
   const formSubmitData = { watchedState, request };

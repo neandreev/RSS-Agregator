@@ -2,7 +2,7 @@ install:
 	npm ci
 
 develop:
-	npx webpack serve
+	npm run develop
 
 build:
-	npx webpack
+	npm run build

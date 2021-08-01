@@ -17,15 +17,14 @@ export default (data) => (e) => {
         feedback: '',
       };
       const id = _.uniqueId();
-      document.querySelector('form').reset();
 
       request(id, url, true);
     })
-    .catch((e) => {
-      console.dir(e);
+    .catch((error) => {
+      console.dir(error);
       watchedState.uiState = {
         status: 'invalid',
-        feedbackKey: e.message.key,
+        feedbackKey: error.message.key,
       };
     });
 };
