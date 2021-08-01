@@ -12,10 +12,10 @@ export default (data) => (e) => {
   validateSchema(watchedState)
     .validate(url)
     .then(() => {
-      // watchedState.uiState = {
-      //   status: 'pending',
-      //   feedback: '',
-      // };
+      watchedState.uiState = {
+        status: 'pending',
+        feedback: '',
+      };
       const id = _.uniqueId();
 
       request(id, url, true);
