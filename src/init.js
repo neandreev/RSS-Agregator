@@ -8,10 +8,6 @@ import parse from './parse';
 import render from './render';
 import locales from './locales';
 
-const isRSS = ({ data }) => (
-  data.status.content_type.includes('application/rss+xml')
-);
-
 const getAllOriginsUrl = (url) => (
   `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${url}`
 );
@@ -58,7 +54,6 @@ export default () => {
 
   const watchedState = onChange(state, (path, value) => {
     if (path === 'uiState') {
-      document.querySelector('form').reset();
       console.log('got');
       switch (value.status) {
         case 'pending':
@@ -68,6 +63,7 @@ export default () => {
           button.disabled = true;
           break;
         case 'invalid':
+          document.querySelector('form').reset();
           input.classList.add('is-invalid');
           input.removeAttribute('readonly');
           feedback.classList.add('text-danger');
@@ -76,6 +72,7 @@ export default () => {
           button.disabled = false;
           break;
         case 'complete':
+          document.querySelector('form').reset();
           button.disabled = false;
           input.removeAttribute('readonly');
           input.classList.remove('is-invalid');
@@ -84,6 +81,7 @@ export default () => {
           feedback.textContent = i18next.t(value.feedbackKey);
           break;
         case 'networkError':
+          document.querySelector('form').reset();
           input.classList.add('is-invalid');
           input.removeAttribute('readonly');
           feedback.classList.add('text-danger');
