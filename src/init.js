@@ -129,7 +129,7 @@ export default () => {
           id, url, title, description,
         };
         const posts = items
-          .map((item) => ({ ...item, feedId: id }));
+          .map((item) => ({ ...item, feedId: id, id: _.uniqueId() }));
         const newPosts = _.differenceBy(posts, state.posts, 'link');
 
         watchedState.feeds = _.sortBy(_.uniqBy([

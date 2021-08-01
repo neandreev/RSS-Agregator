@@ -2,7 +2,8 @@ import _ from 'lodash';
 import i18next from 'i18next';
 
 export default (watchedState) => (e) => {
-  const linkElement = e.target.previousElementSibling;
+  const { id } = e.target.dataset;
+  const linkElement = document.querySelector(`a[data-id='${id}']`);
   const link = linkElement.href;
   const post = _.find(watchedState.posts, { link });
   post.isRead = true;
