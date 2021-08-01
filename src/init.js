@@ -44,6 +44,8 @@ export default () => {
     },
   };
 
+  document.body.innerHTML = render.doc();
+
   const form = document.querySelector('form');
   const input = document.querySelector('.form-control');
   const button = document.querySelector('[type=submit');
@@ -60,14 +62,17 @@ export default () => {
         case 'pending':
           input.classList.remove('is-invalid');
           feedback.textContent = '';
+          button.disabled = true;
           break;
         case 'invalid':
           input.classList.add('is-invalid');
           feedback.classList.add('text-danger');
           feedback.classList.remove('text-success');
           feedback.textContent = i18next.t(value.feedbackKey);
+          button.disabled = false;
           break;
         case 'complete':
+          button.disabled = false;
           input.classList.remove('is-invalid');
           feedback.classList.remove('text-danger');
           feedback.classList.add('text-success');
@@ -78,6 +83,7 @@ export default () => {
           feedback.classList.add('text-danger');
           feedback.classList.remove('text-success');
           feedback.textContent = i18next.t(value.feedbackKey);
+          button.disabled = false;
           break;
         default:
           throw new Error('got into default in switch');
