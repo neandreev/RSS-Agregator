@@ -50,7 +50,8 @@ export default () => {
   const feedback = document.querySelector('.feedback');
   const feedsContainer = document.querySelector('#feeds');
   const postsContainer = document.querySelector('#posts');
-
+  console.log(form);
+  console.log(document.body.innerHTML);
   button.textContent = i18next.t('buttons.form.add');
 
   const watchedState = onChange(state, (path, value) => {
