@@ -58,14 +58,18 @@ export default () => {
 
   const watchedState = onChange(state, (path, value) => {
     if (path === 'uiState') {
+      document.querySelector('form').reset();
+      console.log('got');
       switch (value.status) {
         case 'pending':
           input.classList.remove('is-invalid');
+          input.setAttribute('readonly', true);
           feedback.textContent = '';
           button.disabled = true;
           break;
         case 'invalid':
           input.classList.add('is-invalid');
+          input.removeAttribute('readonly');
           feedback.classList.add('text-danger');
           feedback.classList.remove('text-success');
           feedback.textContent = i18next.t(value.feedbackKey);
@@ -73,6 +77,7 @@ export default () => {
           break;
         case 'complete':
           button.disabled = false;
+          input.removeAttribute('readonly');
           input.classList.remove('is-invalid');
           feedback.classList.remove('text-danger');
           feedback.classList.add('text-success');
@@ -80,6 +85,7 @@ export default () => {
           break;
         case 'networkError':
           input.classList.add('is-invalid');
+          input.removeAttribute('readonly');
           feedback.classList.add('text-danger');
           feedback.classList.remove('text-success');
           feedback.textContent = i18next.t(value.feedbackKey);
