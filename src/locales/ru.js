@@ -6,6 +6,7 @@ export default {
       duplicateUrl: 'RSS уже существует',
       complete: 'RSS успешно загружен',
       networkError: 'Ошибка сети',
+      empty: 'Не должно быть пустым',
     },
     buttons: {
       modal: {

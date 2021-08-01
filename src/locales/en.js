@@ -5,6 +5,8 @@ export default {
       invalidUrl: 'This link isn\'t URL',
       duplicateUrl: 'This RSS is already in list',
       complete: 'RSS properly loaded',
+      networkError: 'Network error',
+      empty: 'The value shouldn\'t be empty',
     },
     buttons: {
       modal: {

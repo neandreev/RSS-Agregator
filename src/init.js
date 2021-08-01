@@ -27,6 +27,9 @@ export default () => {
   });
 
   yup.setLocale({
+    mixed: {
+      required: ({ url }) => ({ key: 'feedback.empty', values: { url } }),
+    },
     string: {
       url: ({ url }) => ({ key: 'feedback.invalidUrl', values: { url } }),
     },
@@ -51,6 +54,7 @@ export default () => {
   button.textContent = i18next.t('buttons.form.add');
 
   const watchedState = onChange(state, (path, value) => {
+    console.log(state);
     if (path === 'uiState') {
       switch (value.status) {
         case 'pending':
@@ -104,7 +108,7 @@ export default () => {
     console.log(state);
   });
 
-  const request = (id, url) => {
+  const request = (id, url, makeStatus) => {
     axios
       .get(getAllOriginsUrl(url))
       .then((response) => {
@@ -116,38 +120,33 @@ export default () => {
           return;
         }
 
-        const makeRequest = () => {
-          const parsedChannel = parse(response.data);
-          const { items, title, description } = parsedChannel;
-          const feed = {
-            id, url, title, description,
-          };
-          const posts = items
-            .map((item) => ({ ...item, feedId: id }));
-          console.log(posts);
-          const newPosts = _.differenceBy(posts, state.posts, 'link');
-          console.log(newPosts);
-
-          watchedState.feeds = _.sortBy(_.uniqBy([
-            feed,
-            ...state.feeds,
-          ], 'url'), 'id');
-          watchedState.posts = _.uniqBy([
-            ...newPosts,
-            ...state.posts,
-          ], 'link');
-
-          setTimeout(makeRequest, 5000);
-
-          console.log('tick');
+        const parsedChannel = parse(response.data);
+        const { items, title, description } = parsedChannel;
+        const feed = {
+          id, url, title, description,
         };
+        const posts = items
+          .map((item) => ({ ...item, feedId: id }));
+        console.log(posts);
+        const newPosts = _.differenceBy(posts, state.posts, 'link');
+        console.log(newPosts);
 
-        makeRequest();
-        watchedState.uiState = { status: 'complete', feedbackKey: 'feedback.complete' };
+        watchedState.feeds = _.sortBy(_.uniqBy([
+          feed,
+          ...state.feeds,
+        ], 'url'), 'id').reverse();
+        watchedState.posts = _.uniqBy([
+          ...newPosts,
+          ...state.posts,
+        ], 'link');
+
+        if (makeStatus) watchedState.uiState = { status: 'complete', feedbackKey: 'feedback.complete' };
       })
       .catch(() => {
         watchedState.uiState = { status: 'networkError', feedbackKey: 'feedback.networkError' };
       });
+
+    setTimeout(() => request(id, url), 5000);
   };
 
   const formSubmitData = { watchedState, request };

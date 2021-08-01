@@ -19,12 +19,13 @@ export default (data) => (e) => {
       const id = _.uniqueId();
       document.querySelector('form').reset();
 
-      request(id, url);
+      request(id, url, true);
     })
-    .catch(({ message }) => {
+    .catch((e) => {
+      console.dir(e);
       watchedState.uiState = {
         status: 'invalid',
-        feedbackKey: message.key,
+        feedbackKey: e.message.key,
       };
     });
 };
