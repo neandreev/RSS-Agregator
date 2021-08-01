@@ -48,7 +48,7 @@ export default () => {
 
   const form = document.querySelector('form');
   const input = document.querySelector('.form-control');
-  const button = document.querySelector('[type=submit');
+  const button = document.querySelector('[type=submit]');
   const feedback = document.querySelector('.feedback');
   const feedsContainer = document.querySelector('#feeds');
   const postsContainer = document.querySelector('#posts');
