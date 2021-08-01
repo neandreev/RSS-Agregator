@@ -22,18 +22,18 @@ export default () => {
       </div>
       <div id="form">
         <form class="md-3">
-          <div class='container-sm'>
+          <div class="container-sm">
             <div class="row">
               <div class="col-8">
-                <input aria-label='url' name='url' type='href' class='form-control' id='rssHref'>
+                <input aria-label="url" name="url" type="href" class="form-control" id="rssHref">
               </div>
               <div class="col-4">
-                <button type='submit' class='btn btn-primary'>Add RSS</button>
+                <button aria-label="add"type="submit" class="btn btn-primary">Add RSS</button>
               </div>
             </div>
           </div>
         </form>
-        <p class='feedback small'></p>
+        <p class="feedback small"></p>
       </div>
       <div id="posts_feeds">
         <div id="feeds"></div>
