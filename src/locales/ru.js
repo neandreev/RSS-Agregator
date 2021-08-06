@@ -20,6 +20,7 @@ export default {
         preview: 'Просмотр',
       },
     },
+    applicationName: 'RSS-Агрегатор',
     feedsHeader: 'Фиды',
     postsHeader: 'Посты',
   },

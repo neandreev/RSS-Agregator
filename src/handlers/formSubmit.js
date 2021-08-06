@@ -16,7 +16,7 @@ export default (data) => (e) => {
         status: 'pending',
         feedback: '',
       };
-      const id = _.uniqueId();
+      const id = parseInt(_.uniqueId(), 10);
 
       request(id, url, true);
     })

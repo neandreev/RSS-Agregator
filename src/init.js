@@ -46,9 +46,9 @@ export default () => {
   const input = document.querySelector('.form-control');
   const button = document.querySelector('[type=submit]');
   const feedback = document.querySelector('.feedback');
+  const postsFeedsContainer = document.querySelector('#posts_feeds');
   const feedsContainer = document.querySelector('#feeds');
   const postsContainer = document.querySelector('#posts');
-  button.textContent = i18next.t('buttons.form.add');
 
   const watchedState = onChange(state, (path, value) => {
     if (path === 'uiState') {
@@ -69,6 +69,7 @@ export default () => {
           button.disabled = false;
           break;
         case 'complete':
+          postsFeedsContainer.classList.add('bg-light', 'border', 'border-1', 'rounded', 'mt-2', 'py-2', 'px-3');
           document.querySelector('form').reset();
           button.disabled = false;
           input.removeAttribute('readonly');
@@ -93,13 +94,6 @@ export default () => {
 
     if (path === 'posts') {
       postsContainer.innerHTML = render.posts(value);
-      const buttons = document.querySelectorAll('li button');
-      buttons.forEach((b) => (
-        b.addEventListener(
-          'click',
-          handlers.postButton(watchedState),
-        )
-      ));
       return;
     }
 
@@ -112,27 +106,19 @@ export default () => {
     axios
       .get(getAllOriginsUrl(url))
       .then((response) => {
-        // if (!isRSS(response)) {
-        //   watchedState.uiState = {
-        //     status: 'invalid',
-        //     feedbackKey: 'feedback.notRSS',
-        //   };
-        //   return;
-        // }
-
         const parsedChannel = parse(response.data);
         const { items, title, description } = parsedChannel;
-        const feed = {
+        const newFeed = {
           id, url, title, description,
         };
         const posts = items
           .map((item) => ({ ...item, feedId: id, id: _.uniqueId() }));
         const newPosts = _.differenceBy(posts, state.posts, 'link');
 
-        watchedState.feeds = _.sortBy(_.uniqBy([
-          feed,
+        watchedState.feeds = _.uniqBy([
+          newFeed,
           ...state.feeds,
-        ], 'url'), 'id').reverse();
+        ], 'url');
         watchedState.posts = _.uniqBy([
           ...newPosts,
           ...state.posts,
@@ -157,4 +143,5 @@ export default () => {
 
   const formSubmitData = { watchedState, request };
   form.addEventListener('submit', handlers.formSubmit(formSubmitData));
+  postsContainer.addEventListener('click', handlers.postButton(watchedState));
 };
