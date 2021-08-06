@@ -20,6 +20,7 @@ export default {
         preview: 'Preview',
       },
     },
+    formPlaceholder: 'Example',
     applicationName: 'RSS-Agregator',
     feedsHeader: 'Feeds',
     postsHeader: 'Posts',

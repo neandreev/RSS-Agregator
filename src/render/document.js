@@ -1,6 +1,8 @@
 import i18next from 'i18next';
 
 export default () => {
+  const placeholder = `${`${i18next.t('formPlaceholder')}:&nbsp;https://waitbutwhy.com/feed`}`;
+  console.log(placeholder);
   const doc = `
     <div class="container-fluid">
       <div class="row">
@@ -30,35 +32,20 @@ export default () => {
             <h1>${i18next.t('applicationName')}</h1>
           </div>  
           <div id="form">
-              <!-- <div class="d-flex flex-column align-items justify-content-between align-items-rounded">
-                <label class="form-label" for="rssHref">Введите RSS URL</label>
-
-                <div class="row align-items-center justify-content-md-center">
-                  <div class="my-2 form-group col-6">
-                      <input placeholder="RSS URL" aria-label="url" name="url" type="href" class="form-control" id="rssHref">
+            <div class="bg-light border border-1 rounded mt-1 py-2 px-3">
+              <label class="form-label" for="rssHref">Введите RSS URL</label>
+              <form>
+                <div class="row">
+                  <div class="col">
+                    <input placeholder=${placeholder} aria-label="url" name="url" type="href" class="form-control" id="rssHref">
                   </div>
-                  <div class="my-2 form-group col-auto">
-                    <button aria-label="add" type="submit" class="btn btn-primary align-bottom">${i18next.t('buttons.form.add')}</button>
+                  <div class="col-auto">
+                    <button aria-label="add" type="submit" class="btn btn-primary">${i18next.t('buttons.form.add')}</button>
                   </div>
                 </div>
-              
-                <small class="feedback small"></small>
-              </div> -->
-
-              <div class="bg-light border border-1 rounded mt-1 py-2 px-3">
-                <label class="form-label" for="rssHref">Введите RSS URL</label>
-                <form>
-                  <div class="row">
-                    <div class="col">
-                      <input placeholder="RSS URL" aria-label="url" name="url" type="href" class="form-control" id="rssHref">
-                    </div>
-                    <div class="col-auto">
-                      <button aria-label="add" type="submit" class="btn btn-primary">${i18next.t('buttons.form.add')}</button>
-                    </div>
-                  </div>
-                </form>
-                <small class="feedback small"></small>
-              </div>
+              </form>
+              <small class="feedback small"></small>
+            </div>
           </div>
           <div id="posts_feeds">
             <div id="feeds"></div>
