@@ -1,4 +1,5 @@
 import i18next from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 import * as yup from 'yup';
 import onChange from 'on-change';
 import _ from 'lodash';
@@ -13,8 +14,7 @@ const getAllOriginsUrl = (url) => (
 );
 
 export default () => {
-  i18next.init({
-    lng: 'ru',
+  i18next.use(LanguageDetector).init({
     debug: true,
     resources: {
       ru: locales.ru,
