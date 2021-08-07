@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 
 export default () => {
-  const placeholder = `${`${i18next.t('formPlaceholder')}:&nbsp;https://waitbutwhy.com/feed`}`;
+  const placeholder = `${`${i18next.t('inputPlaceholder')}:&nbsp;https://waitbutwhy.com/feed`}`;
   console.log(placeholder);
   const doc = `
     <div class="container-fluid">
@@ -33,7 +33,7 @@ export default () => {
           </div>  
           <div id="form">
             <div class="bg-light border border-1 rounded mt-1 py-2 px-3">
-              <label class="form-label" for="rssHref">Введите RSS URL</label>
+              <label class="form-label" for="rssHref">${i18next.t('inputLabel')}</label>
               <form>
                 <div class="row">
                   <div class="col">
