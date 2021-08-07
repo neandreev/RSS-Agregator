@@ -1,9 +1,9 @@
 # RSS-Agregator
-[![Actions Status](https://github.com/neandreev/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/neandreev/frontend-project-lvl3/actions)
+[![Eslint](https://github.com/neandreev/RSS-Agregator/actions/workflows/jest.yml/badge.svg?branch=main)](https://github.com/neandreev/RSS-Agregator/actions/workflows/jest.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6aa59dd715928a165f0b/maintainability)](https://codeclimate.com/github/neandreev/RSS-Agregator/maintainability)
 
 ## Что это:
-CLI-Утилита, позволяющая находить и выводить на экран различия между двумя конфигурационными файлами формата json, yml или ini
+Агрегатор RSS фидов, производящий парсинг RSS по приведённым вами ссылкам и выводящий в простой форме посты
 
 ## Как это:
  - JS с минимумом библиотечных зависимостей
@@ -16,6 +16,18 @@ CLI-Утилита, позволяющая находить и выводить 
  - Интернационализация: [i18next](https://github.com/i18next/i18next)
  - Валидация данных: [yup](https://github.com/jquense/yup)
  - [Eslint](https://github.com/eslint/eslint)
+
+## Как это работает:
+```sh
+Установка: (внутри директории с исходным кодом)
+   make install
+
+Live-разработка:
+   make develop
+
+Сборка:
+   make build (Результат будет находиться в папке 'public')
+```
 
 ## Как это выглядит:
 <img src="https://neandreev.ru/images/RSS-Agregator_lowres.gif" alt="RSS-Agregator" width="600"/>
