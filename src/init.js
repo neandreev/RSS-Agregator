@@ -15,6 +15,7 @@ const getAllOriginsUrl = (url) => (
 
 export default () => {
   i18next.use(LanguageDetector).init({
+    lng: 'ru',
     debug: true,
     resources: {
       ru: locales.ru,
