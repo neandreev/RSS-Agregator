@@ -1,4 +1,7 @@
 install:
+	npm install
+
+ci:
 	npm ci
 
 develop:
