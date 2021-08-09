@@ -2,16 +2,9 @@ import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import * as yup from 'yup';
 import onChange from 'on-change';
-import _ from 'lodash';
-import axios from 'axios';
 import handlers from './handlers';
-import parse from './parse';
 import render from './render';
 import locales from './locales';
-
-const getAllOriginsUrl = (url) => (
-  `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${url}`
-);
 
 export default () => {
   i18next.use(LanguageDetector).init({
@@ -51,42 +44,48 @@ export default () => {
   const feedsContainer = document.querySelector('#feeds');
   const postsContainer = document.querySelector('#posts');
 
+  const view = {
+    invalid: (value) => {
+      document.querySelector('form').reset();
+      input.classList.add('is-invalid');
+      input.removeAttribute('readonly');
+      feedback.classList.add('text-danger');
+      feedback.classList.remove('text-success');
+      feedback.textContent = i18next.t(value.feedbackKey);
+      button.disabled = false;
+    },
+    valid: (value) => {
+      postsFeedsContainer.classList.add('bg-light', 'border', 'border-1', 'rounded', 'mt-2', 'py-2', 'px-3');
+      document.querySelector('form').reset();
+      button.disabled = false;
+      input.removeAttribute('readonly');
+      input.classList.remove('is-invalid');
+      feedback.classList.remove('text-danger');
+      feedback.classList.add('text-success');
+      feedback.textContent = i18next.t(value.feedbackKey);
+    },
+    pending: () => {
+      input.classList.remove('is-invalid');
+      input.setAttribute('readonly', true);
+      feedback.textContent = '';
+      button.disabled = true;
+    },
+  };
+
   const watchedState = onChange(state, (path, value) => {
     if (path === 'uiState') {
       switch (value.status) {
         case 'pending':
-          input.classList.remove('is-invalid');
-          input.setAttribute('readonly', true);
-          feedback.textContent = '';
-          button.disabled = true;
+          view.pending();
           break;
         case 'invalid':
-          document.querySelector('form').reset();
-          input.classList.add('is-invalid');
-          input.removeAttribute('readonly');
-          feedback.classList.add('text-danger');
-          feedback.classList.remove('text-success');
-          feedback.textContent = i18next.t(value.feedbackKey);
-          button.disabled = false;
+          view.invalid(value);
           break;
         case 'complete':
-          postsFeedsContainer.classList.add('bg-light', 'border', 'border-1', 'rounded', 'mt-2', 'py-2', 'px-3');
-          document.querySelector('form').reset();
-          button.disabled = false;
-          input.removeAttribute('readonly');
-          input.classList.remove('is-invalid');
-          feedback.classList.remove('text-danger');
-          feedback.classList.add('text-success');
-          feedback.textContent = i18next.t(value.feedbackKey);
+          view.valid(value);
           break;
         case 'networkError':
-          document.querySelector('form').reset();
-          input.classList.add('is-invalid');
-          input.removeAttribute('readonly');
-          feedback.classList.add('text-danger');
-          feedback.classList.remove('text-success');
-          feedback.textContent = i18next.t(value.feedbackKey);
-          button.disabled = false;
+          view.invalid(value);
           break;
         default:
           throw new Error('got into default in switch');
@@ -103,46 +102,6 @@ export default () => {
     }
   });
 
-  const request = (id, url, makeStatus) => {
-    axios
-      .get(getAllOriginsUrl(url))
-      .then((response) => {
-        const parsedChannel = parse(response.data);
-        const { items, title, description } = parsedChannel;
-        const newFeed = {
-          id, url, title, description,
-        };
-        const posts = items
-          .map((item) => ({ ...item, feedId: id, id: _.uniqueId() }));
-        const newPosts = _.differenceBy(posts, state.posts, 'link');
-
-        watchedState.feeds = _.uniqBy([
-          newFeed,
-          ...state.feeds,
-        ], 'url');
-        watchedState.posts = _.uniqBy([
-          ...newPosts,
-          ...state.posts,
-        ], 'link');
-
-        if (makeStatus) watchedState.uiState = { status: 'complete', feedbackKey: 'feedback.complete' };
-        setTimeout(() => request(id, url), 5000);
-      })
-      .catch((e) => {
-        switch (e.message) {
-          case 'Network Error':
-            watchedState.uiState = { status: 'networkError', feedbackKey: 'feedback.networkError' };
-            break;
-          case 'notRSS':
-            watchedState.uiState = { status: 'invalid', feedbackKey: 'feedback.notRSS' };
-            break;
-          default:
-            throw new Error(`Unknown error message: ${e}`);
-        }
-      });
-  };
-
-  const formSubmitData = { watchedState, request };
-  form.addEventListener('submit', handlers.formSubmit(formSubmitData));
+  form.addEventListener('submit', handlers.formSubmit(watchedState));
   postsContainer.addEventListener('click', handlers.postButton(watchedState));
 };
