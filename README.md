@@ -16,7 +16,7 @@
 - JS с минимумом библиотечных зависимостей
   - [lodash](https://github.com/lodash/lodash)
   - [Axios](https://github.com/axios/axios)
-  - [on-change](https://github.com/sindresorhus/on-change) (удобная обёртка над [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), помогающая в реализации MVC подхода в архитектуре приложения)
+  - [on-change](https://github.com/sindresorhus/on-change) (удобная обёртка над [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), помогающая в реализации MVC подхода в приложении)
 - Сборка: [Webpack](https://github.com/webpack/webpack)
 - Стили: [Bootstrap](https://github.com/twbs/bootstrap)
 - Тесты: [Jest](https://github.com/facebook/jest)
