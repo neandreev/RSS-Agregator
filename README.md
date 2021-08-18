@@ -19,7 +19,6 @@
   - [on-change](https://github.com/sindresorhus/on-change) (удобная обёртка над [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), помогающая в реализации MVC подхода в приложении)
 - Сборка: [Webpack](https://github.com/webpack/webpack)
 - Стили: [Bootstrap](https://github.com/twbs/bootstrap)
-- Тесты: [Jest](https://github.com/facebook/jest)
 - Интернационализация: [i18next](https://github.com/i18next/i18next)
 - Валидация данных: [yup](https://github.com/jquense/yup)
 - [Eslint](https://github.com/eslint/eslint)
