@@ -27,13 +27,30 @@
 
 ```sh
 Установка: (внутри директории с исходным кодом)
-   make install
+ $ make install
 
-Live-разработка:
-   make develop
+Live-разработка: 
+ $ make develop                   (https://localhost:8080)
 
 Сборка:
-   make build (Результат будет находиться в папке 'public')
+ $ make build (Результат будет находиться в папке 'public')
+```
+## Docker
+
+```sh
+Сборка:
+ $ make docker-build
+ 
+Запуск контейнера:
+ $ make docker-run                (https://localhost:4200)
+ $ make docker-run port=80        (https://localhost:80)
+ 
+Запуск контейнера в режиме разработки:
+ $ make docker-run-dev            (https://localhost:4200)
+ $ make docker-run-dev port=80    (https://localhost:80)
+ 
+Остановка, удаление контейнера:
+ $ make docker-stop
 ```
 
 ## Как это выглядит
