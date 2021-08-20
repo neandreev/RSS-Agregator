@@ -1,9 +1,5 @@
 current_dir := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-port ?= 3000
-
-port:
-	echo $(port)
-	echo ${PORT}
+port ?= 4200
 
 install:
 	npm install
@@ -21,10 +17,10 @@ docker-build:
 	docker build -t rss-agregator .
 
 docker-run:
-	docker run -d -p $(port):${PORT} --rm --name rss-agregator rss-agregator
+	docker run -d -p $(port):4200 --rm --name rss-agregator rss-agregator
 
 docker-run-dev:
-	docker run -d -p $(port):${PORT} -v "$(current_dir):/app" -v /app/node_modules --rm --name rss-agregator rss-agregator
+	docker run -d -p $(port):4200 -v "$(current_dir):/app" -v /app/node_modules --rm --name rss-agregator rss-agregator
 
 docker-stop:
 	docker stop rss-agregator

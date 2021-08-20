@@ -12,4 +12,4 @@ ENV PORT=4200
 
 EXPOSE $PORT
 
-CMD [ "make", "develop" ];
+CMD [ "npm", "run", "docker-develop" ];
