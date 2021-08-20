@@ -2,7 +2,6 @@ import i18next from 'i18next';
 
 export default () => {
   const placeholder = `${`${i18next.t('inputPlaceholder')}:&nbsp;https://waitbutwhy.com/feed`}`;
-  console.log(placeholder);
   const doc = `
     <div class="container-fluid">
       <div class="row">
